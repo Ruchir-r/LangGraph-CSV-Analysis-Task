@@ -1,0 +1,236 @@
+/* Chat Interface Markdown Styles */
+
+.chat-message-bubble {
+  max-width: 70%;
+  padding: 16px;
+  border-radius: 12px;
+  word-wrap: break-word;
+}
+
+.chat-message-user {
+  background-color: #1976d2;
+  color: white;
+  border-top-right-radius: 4px;
+}
+
+.chat-message-assistant {
+  background-color: #f5f5f5;
+  color: #333;
+  border-top-left-radius: 4px;
+}
+
+.markdown-content {
+  line-height: 1.6;
+}
+
+.markdown-content p {
+  margin: 0.5em 0;
+}
+
+.markdown-content p:first-child {
+  margin-top: 0;
+}
+
+.markdown-content p:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+  margin: 1em 0 0.5em 0;
+  font-weight: 600;
+}
+
+.markdown-content h1:first-child,
+.markdown-content h2:first-child,
+.markdown-content h3:first-child {
+  margin-top: 0;
+}
+
+.markdown-content h1 {
+  font-size: 1.25em;
+  border-bottom: 2px solid currentColor;
+  padding-bottom: 0.25em;
+}
+
+.markdown-content h2 {
+  font-size: 1.1em;
+}
+
+.markdown-content h3 {
+  font-size: 1em;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  margin: 0.5em 0;
+  padding-left: 1.5em;
+}
+
+.markdown-content li {
+  margin: 0.25em 0;
+}
+
+.markdown-content code {
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  font-size: 0.9em;
+  font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+}
+
+.chat-message-user .markdown-content code {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.chat-message-assistant .markdown-content code {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.markdown-content pre {
+  padding: 1em;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 0.5em 0;
+  font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
+.chat-message-user .markdown-content pre {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.chat-message-assistant .markdown-content pre {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.markdown-content blockquote {
+  margin: 0.5em 0;
+  padding-left: 1em;
+  font-style: italic;
+  opacity: 0.9;
+}
+
+.chat-message-user .markdown-content blockquote {
+  border-left: 4px solid rgba(255, 255, 255, 0.3);
+}
+
+.chat-message-assistant .markdown-content blockquote {
+  border-left: 4px solid rgba(0, 0, 0, 0.2);
+}
+
+.markdown-content strong {
+  font-weight: 600;
+}
+
+.markdown-content em {
+  font-style: italic;
+}
+
+.markdown-content a {
+  text-decoration: underline;
+}
+
+.chat-message-user .markdown-content a {
+  color: inherit;
+}
+
+.chat-message-assistant .markdown-content a {
+  color: #1976d2;
+}
+
+.markdown-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.5em 0;
+  font-size: 0.9em;
+}
+
+.markdown-content th,
+.markdown-content td {
+  padding: 0.5em;
+  text-align: left;
+  border: 1px solid;
+}
+
+.chat-message-user .markdown-content th,
+.chat-message-user .markdown-content td {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.chat-message-assistant .markdown-content th,
+.chat-message-assistant .markdown-content td {
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+.markdown-content th {
+  font-weight: 600;
+}
+
+.chat-message-user .markdown-content th {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.chat-message-assistant .markdown-content th {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.markdown-content hr {
+  margin: 1em 0;
+  border: none;
+  height: 1px;
+}
+
+.chat-message-user .markdown-content hr {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.chat-message-assistant .markdown-content hr {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Analysis indicators */
+.analysis-indicators {
+  margin-top: 0.5em;
+  display: flex;
+  gap: 0.25em;
+  flex-wrap: wrap;
+}
+
+.analysis-indicators .MuiChip-root {
+  height: 20px;
+  font-size: 0.7rem;
+}
+
+/* Message timestamp */
+.message-timestamp {
+  opacity: 0.7;
+  font-size: 0.7rem;
+  text-align: right;
+  margin-top: 0.5em;
+}
+
+/* Emoji styling */
+.markdown-content {
+  /* Ensure emojis don't break layout */
+  word-break: break-word;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .chat-message-bubble {
+    max-width: 85%;
+  }
+  
+  .markdown-content table {
+    font-size: 0.8em;
+  }
+  
+  .markdown-content th,
+  .markdown-content td {
+    padding: 0.25em;
+  }
+}

@@ -1,0 +1,9 @@
+Order_ID,Customer_ID,Order_Date,Region,Product,Units,Unit_Price,Discount,Revenue,Delivery_Date,Meta
+2001,CUST-04,05/12/2024,APAC,Widget-C,50,50.0,0.20,2000.0,15/12/2024,"{""channel"":""online""}"
+2002,CUST-01,07/12/2024,EU,Widget-B,80,20.0,0.05,1520.0,18/12/2024,"{""channel"":""retail""}"
+2003,CUST-05,10/12/2024,NA,Widget-A,40,10.5,0.00,420.0,15/12/2024,"{""channel"":""partner""}"
+2004,CUST-09,12/12/2024,APAC,Widget-A,55,10.5,0.08,532.70,20/12/2024,"{""channel"":""online""}"
+2005,CUST-10,14/12/2024,EU,Widget-C,30,50.0,0.12,1320.0,22/12/2024,"{""channel"":""partner""}"
+2006,CUST-11,16/12/2024,NA,Widget-B,90,20.0,0.07,1674.0,24/12/2024,"{""channel"":""retail""}"
+2007,CUST-12,18/12/2024,APAC,Widget-B,45,20.0,0.10,810.0,26/12/2024,"{""channel"":""online""}"
+2008,CUST-13,20/12/2024,EU,Widget-A,35,10.5,0.03,357.525,28/12/2024,"{""channel"":""online""}"

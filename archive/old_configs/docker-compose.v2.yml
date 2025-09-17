@@ -1,0 +1,184 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database for V2
+  postgres:
+    image: postgres:15-alpine
+    container_name: data-analysis-postgres
+    environment:
+      POSTGRES_DB: data_analysis_v2
+      POSTGRES_USER: data_analyst
+      POSTGRES_PASSWORD: secure_password_2024
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d/
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U data_analyst -d data_analysis_v2"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for caching and session management
+  redis:
+    image: redis:7-alpine
+    container_name: data-analysis-redis
+    command: redis-server --requirepass redis_password_2024
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # FastAPI Backend V2
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.v2
+    container_name: data-analysis-backend-v2
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://data_analyst:secure_password_2024@postgres:5432/data_analysis_v2
+      - REDIS_URL=redis://:redis_password_2024@redis:6379/0
+      - DEFAULT_LLM_PROVIDER=gemini
+      - ENVIRONMENT=development
+      - DEBUG=true
+    volumes:
+      - ./backend:/app
+      - ./langgraph:/app/langgraph
+      - ./config:/app/config
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # Celery Worker for background tasks
+  celery-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.v2
+    container_name: data-analysis-celery
+    command: celery -A app.celery_app worker --loglevel=info
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://data_analyst:secure_password_2024@postgres:5432/data_analysis_v2
+      - REDIS_URL=redis://:redis_password_2024@redis:6379/0
+      - CELERY_BROKER_URL=redis://:redis_password_2024@redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://:redis_password_2024@redis:6379/0
+    volumes:
+      - ./backend:/app
+      - ./langgraph:/app/langgraph
+      - ./uploads:/app/uploads
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # React Frontend V2
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.v2
+    container_name: data-analysis-frontend-v2
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+      - REACT_APP_VERSION=2.0.0
+      - REACT_APP_ENVIRONMENT=development
+      - REACT_APP_ENABLE_WEBSOCKETS=true
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # Prometheus for monitoring (optional)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: data-analysis-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+    networks:
+      - app-network
+    profiles:
+      - monitoring
+
+  # Grafana for visualization (optional)  
+  grafana:
+    image: grafana/grafana:latest
+    container_name: data-analysis-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - app-network
+    profiles:
+      - monitoring
+
+  # Nginx reverse proxy (optional for production)
+  nginx:
+    image: nginx:alpine
+    container_name: data-analysis-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - app-network
+    profiles:
+      - production
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
