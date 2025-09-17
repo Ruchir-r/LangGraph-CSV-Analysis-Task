@@ -29,31 +29,6 @@ This platform provides an intuitive interface for analyzing CSV and Excel files 
 
 You need an API key from one of the supported providers. **Google Gemini is recommended** for the best balance of performance, cost, and reliability.
 
-#### Option 1: Google Gemini (Recommended)
-1. Visit [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Sign in with your Google account
-3. Click "Create API Key"
-4. Copy your API key (starts with `AIzaSy...`)
-5. **Free tier includes**: 15 requests per minute, 1 million tokens per day
-
-#### Option 2: OpenAI
-1. Visit [OpenAI API Keys](https://platform.openai.com/api-keys)
-2. Sign in and create a new secret key
-3. Copy your API key (starts with `sk-...`)
-4. **Note**: Requires payment after free trial
-
-#### Option 3: Anthropic
-1. Visit [Anthropic Console](https://console.anthropic.com/)
-2. Sign in and generate an API key
-3. Copy your API key (starts with `sk-ant-...`)
-4. **Note**: Requires payment
-
-#### Option 4: Groq (Fast, Free Alternative)
-1. Visit [Groq Console](https://console.groq.com/keys)
-2. Sign in and create an API key
-3. Copy your API key (starts with `gsk_...`)
-4. **Free tier**: High-speed inference with rate limits
-
 ### Installation
 
 1. **Clone the repository**
@@ -197,26 +172,6 @@ System: [Provides actionable recommendations]
 | `LOG_LEVEL` | Logging level (DEBUG/INFO/WARNING/ERROR) | No |
 
 *At least one API key is required
-
-### Provider Recommendations
-
-1. **Google Gemini** (Recommended)
-   - **Best for**: Production use, balanced cost/performance
-   - **Free tier**: 15 RPM, 1M tokens/day
-   - **Model**: `gemini-1.5-flash` (fast) or `gemini-1.5-pro` (advanced)
-
-2. **Groq** (Fast & Free)
-   - **Best for**: Development, high-speed inference
-   - **Free tier**: Rate-limited but very fast
-   - **Model**: `llama-3.1-8b-instant`
-
-3. **OpenAI** (Premium)
-   - **Best for**: Advanced analysis, requires payment
-   - **Model**: `gpt-4o-mini` (cost-effective) or `gpt-4o` (advanced)
-
-4. **Anthropic** (Premium)
-   - **Best for**: Complex reasoning, requires payment
-   - **Model**: `claude-3-haiku-20240307` (fast) or `claude-3-sonnet-20240229` (balanced)
 
 ### API Configuration
 
