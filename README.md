@@ -12,7 +12,7 @@ This platform provides an intuitive interface for analyzing CSV and Excel files 
 - **Multi-file Analysis**: Process and correlate data across multiple CSV/Excel files
 - **Real-time Processing**: WebSocket-powered progress updates during analysis
 - **Advanced Analytics**: Statistical correlation, anomaly detection, and forecasting
-- **Multi-LLM Support**: Supports OpenAI, Anthropic, and Google Gemini APIs
+- **Multi-LLM Support**: Google Gemini (recommended), Groq, OpenAI, and Anthropic APIs
 - **Session Persistence**: Maintains conversation context across sessions
 - **Production Ready**: Comprehensive error handling and retry mechanisms
 
@@ -23,7 +23,36 @@ This platform provides an intuitive interface for analyzing CSV and Excel files 
 - Python 3.8+
 - Node.js 14+
 - npm or yarn
-- LLM API key (OpenAI, Anthropic, or Google)
+- AI API key (see API Key Setup below)
+
+### API Key Setup (Required)
+
+You need an API key from one of the supported providers. **Google Gemini is recommended** for the best balance of performance, cost, and reliability.
+
+#### Option 1: Google Gemini (Recommended)
+1. Visit [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Sign in with your Google account
+3. Click "Create API Key"
+4. Copy your API key (starts with `AIzaSy...`)
+5. **Free tier includes**: 15 requests per minute, 1 million tokens per day
+
+#### Option 2: OpenAI
+1. Visit [OpenAI API Keys](https://platform.openai.com/api-keys)
+2. Sign in and create a new secret key
+3. Copy your API key (starts with `sk-...`)
+4. **Note**: Requires payment after free trial
+
+#### Option 3: Anthropic
+1. Visit [Anthropic Console](https://console.anthropic.com/)
+2. Sign in and generate an API key
+3. Copy your API key (starts with `sk-ant-...`)
+4. **Note**: Requires payment
+
+#### Option 4: Groq (Fast, Free Alternative)
+1. Visit [Groq Console](https://console.groq.com/keys)
+2. Sign in and create an API key
+3. Copy your API key (starts with `gsk_...`)
+4. **Free tier**: High-speed inference with rate limits
 
 ### Installation
 
@@ -39,12 +68,33 @@ This platform provides an intuitive interface for analyzing CSV and Excel files 
    ```
    
    Edit `backend/.env` and add your API key:
+   
+   **For Google Gemini (Recommended):**
    ```env
-   OPENAI_API_KEY=your_api_key_here
-   # OR
-   ANTHROPIC_API_KEY=your_api_key_here
-   # OR
-   GOOGLE_API_KEY=your_api_key_here
+   GOOGLE_API_KEY=AIzaSy...
+   DEFAULT_LLM_PROVIDER=google
+   DEFAULT_MODEL=gemini-1.5-flash
+   ```
+   
+   **For Groq (Fast & Free):**
+   ```env
+   GROQ_API_KEY=gsk_...
+   DEFAULT_LLM_PROVIDER=groq
+   DEFAULT_MODEL=llama-3.1-8b-instant
+   ```
+   
+   **For OpenAI:**
+   ```env
+   OPENAI_API_KEY=sk-...
+   DEFAULT_LLM_PROVIDER=openai
+   DEFAULT_MODEL=gpt-4o-mini
+   ```
+   
+   **For Anthropic:**
+   ```env
+   ANTHROPIC_API_KEY=sk-ant-...
+   DEFAULT_LLM_PROVIDER=anthropic
+   DEFAULT_MODEL=claude-3-haiku-20240307
    ```
 
 3. **Install dependencies**
@@ -137,21 +187,44 @@ System: [Provides actionable recommendations]
 
 | Variable | Description | Required |
 |----------|-------------|----------|
+| `GOOGLE_API_KEY` | Google Gemini API key (recommended) | Yes* |
+| `GROQ_API_KEY` | Groq API key (fast & free) | Yes* |
 | `OPENAI_API_KEY` | OpenAI API key | Yes* |
 | `ANTHROPIC_API_KEY` | Anthropic API key | Yes* |
-| `GOOGLE_API_KEY` | Google Gemini API key | Yes* |
-| `DEFAULT_PROVIDER` | Default LLM provider (openai/anthropic/google) | No |
+| `DEFAULT_LLM_PROVIDER` | Default LLM provider (google/groq/openai/anthropic) | No |
+| `DEFAULT_MODEL` | Default model for the provider | No |
 | `DATABASE_URL` | Database connection string | No |
 | `LOG_LEVEL` | Logging level (DEBUG/INFO/WARNING/ERROR) | No |
 
 *At least one API key is required
 
+### Provider Recommendations
+
+1. **Google Gemini** (Recommended)
+   - **Best for**: Production use, balanced cost/performance
+   - **Free tier**: 15 RPM, 1M tokens/day
+   - **Model**: `gemini-1.5-flash` (fast) or `gemini-1.5-pro` (advanced)
+
+2. **Groq** (Fast & Free)
+   - **Best for**: Development, high-speed inference
+   - **Free tier**: Rate-limited but very fast
+   - **Model**: `llama-3.1-8b-instant`
+
+3. **OpenAI** (Premium)
+   - **Best for**: Advanced analysis, requires payment
+   - **Model**: `gpt-4o-mini` (cost-effective) or `gpt-4o` (advanced)
+
+4. **Anthropic** (Premium)
+   - **Best for**: Complex reasoning, requires payment
+   - **Model**: `claude-3-haiku-20240307` (fast) or `claude-3-sonnet-20240229` (balanced)
+
 ### API Configuration
 
-The system automatically detects available API keys and configures providers accordingly. Priority order:
-1. OpenAI (if API key available)
-2. Anthropic (if API key available)
-3. Google Gemini (if API key available)
+The system automatically detects available API keys and uses the configured default provider. If no default is specified, priority order:
+1. Google Gemini (if API key available)
+2. Groq (if API key available)
+3. OpenAI (if API key available)
+4. Anthropic (if API key available)
 
 ## Development
 
@@ -227,22 +300,65 @@ Full API documentation available at: http://localhost:8000/docs
 
 ### Common Issues
 
-1. **API Key Errors**
-   - Ensure API key is correctly set in `.env` file
-   - Verify API key has sufficient credits/permissions
-   - Check API key format (should start with appropriate prefix)
+1. **API Key Setup Issues**
+   
+   **Problem**: "No LLM provider configured" or "Invalid API key"
+   
+   **Solution**:
+   ```bash
+   # Check your .env file exists
+   ls -la backend/.env
+   
+   # Verify API key format
+   cat backend/.env | grep API_KEY
+   ```
+   
+   **Expected formats**:
+   - Google Gemini: `AIzaSyABC123...` (39 characters)
+   - Groq: `gsk_ABC123...` (starts with gsk_)
+   - OpenAI: `sk-proj-ABC123...` or `sk-ABC123...`
+   - Anthropic: `sk-ant-api03-ABC123...`
+   
+   **Common fixes**:
+   - Remove quotes around API key in .env file
+   - Ensure no spaces before/after the API key
+   - Copy the API key directly from provider dashboard
+   - Restart the backend after updating .env file
 
-2. **Port Conflicts**
+2. **Provider-Specific Issues**
+   
+   **Google Gemini "API key not valid"**:
+   - Ensure you've enabled the Generative AI API in Google Cloud Console
+   - Check API key restrictions (if any) in Google AI Studio
+   
+   **Groq rate limiting**:
+   - Free tier has request limits - wait a few minutes and retry
+   - Consider upgrading to paid tier for higher limits
+   
+   **OpenAI "Insufficient quota"**:
+   - Add billing information to your OpenAI account
+   - Check usage limits in OpenAI dashboard
+   
+   **Testing your API key**:
+   ```bash
+   # Test Google Gemini key
+   curl "https://generativelanguage.googleapis.com/v1/models?key=YOUR_API_KEY"
+   
+   # Test OpenAI key
+   curl -H "Authorization: Bearer YOUR_API_KEY" https://api.openai.com/v1/models
+   ```
+
+3. **Port Conflicts**
    - Backend runs on port 8000, frontend on port 3000
    - Use `./deploy.sh --port 8080` to change backend port
    - Check for running processes: `lsof -i :8000`
 
-3. **Installation Issues**
+4. **Installation Issues**
    - Ensure Python 3.8+ and Node.js 14+ are installed
    - Use virtual environment for Python dependencies
    - Clear npm cache: `npm cache clean --force`
 
-4. **File Upload Issues**
+5. **File Upload Issues**
    - Maximum file size: 10MB per file
    - Supported formats: CSV, Excel (.xlsx, .xls)
    - Ensure files have proper headers and structure
